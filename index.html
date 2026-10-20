@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0c18">
+<title>Cinema ♡ | Una canción para ti</title>
+<style>
+:root{
+  --cream:#fff7ef;
+  --soft:#d7d0dd;
+  --accent:#ef9c9c;
+  --accent2:#bba8df;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#080811;color:white;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+body{
+  min-height:100dvh;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(146,90,142,.23), transparent 36%),
+    radial-gradient(circle at 82% 70%, rgba(61,77,142,.26), transparent 38%),
+    linear-gradient(160deg,#080810,#111122 55%,#17101b);
+}
+.stars,.stars:before,.stars:after{
+  position:fixed;inset:0;content:"";pointer-events:none;
+  background-image:
+    radial-gradient(circle,#fff 0 1px,transparent 1.5px),
+    radial-gradient(circle,#fff 0 .7px,transparent 1.2px);
+  background-size:83px 83px,127px 127px;
+  background-position:0 0,37px 24px;
+  opacity:.16;
+  animation:drift 28s linear infinite;
+}
+.stars:before{transform:scale(1.2);opacity:.08;animation-duration:40s}
+.stars:after{transform:scale(.82);opacity:.11;animation-duration:22s}
+@keyframes drift{to{background-position:180px 100px, -120px 180px}}
+
+.page{
+  width:min(100%,520px);
+  min-height:100dvh;
+  padding:env(safe-area-inset-top) 22px env(safe-area-inset-bottom);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  position:relative;
+  z-index:2;
+}
+.top{
+  position:absolute;
+  top:max(28px,env(safe-area-inset-top));
+  left:22px;right:22px;
+  text-align:center;
+  opacity:.9;
+}
+.kicker{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--soft)}
+.song{font-family:Georgia,serif;font-size:15px;margin-top:8px;color:var(--cream)}
+
+.stage{
+  min-height:390px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.dedication{
+  max-width:360px;
+  transition:.6s ease;
+}
+.dedication.hide{opacity:0;transform:translateY(-10px);pointer-events:none}
+.heart{font-size:28px;margin-bottom:18px;opacity:.9}
+.dedication h1{
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:400;
+  font-size:clamp(34px,9vw,49px);
+  line-height:1.08;
+  margin:0;
+  letter-spacing:-.03em;
+}
+.dedication p{
+  margin:18px auto 0;
+  max-width:285px;
+  color:var(--soft);
+  line-height:1.55;
+  font-size:14px;
+}
+
+.lyric{
+  width:100%;
+  max-width:430px;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-48%);
+  padding:20px;
+  opacity:0;
+  transition:opacity .12s ease, transform .12s ease;
+  pointer-events:none;
+}
+.lyric.show{opacity:1;transform:translate(-50%,-50%)}
+.en{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(27px,7.8vw,40px);
+  line-height:1.15;
+  color:var(--cream);
+  text-wrap:balance;
+  text-shadow:0 2px 16px rgba(0,0,0,.42);
+}
+.divider{
+  width:34px;height:1px;
+  margin:22px auto 17px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.es{
+  font-size:clamp(15px,4.2vw,19px);
+  line-height:1.45;
+  color:#ddd5e5;
+  font-style:italic;
+  text-wrap:balance;
+}
+.final{
+  display:none;
+  max-width:360px;
+  text-align:center;
+  font-family:Georgia,serif;
+  font-size:32px;
+  line-height:1.2;
+  color:var(--cream);
+}
+.final.show{display:block;animation:fadeUp .8s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.player{
+  position:absolute;
+  left:22px;right:22px;
+  bottom:max(30px,calc(env(safe-area-inset-bottom) + 22px));
+}
+.controls{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.play{
+  width:58px;height:58px;flex:0 0 58px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.10);
+  backdrop-filter:blur(14px);
+  color:white;
+  display:grid;place-items:center;
+  cursor:pointer;
+  box-shadow:0 10px 30px rgba(0,0,0,.22);
+}
+.play:active{transform:scale(.97)}
+.icon{
+  width:0;height:0;
+  border-top:8px solid transparent;
+  border-bottom:8px solid transparent;
+  border-left:13px solid white;
+  margin-left:3px;
+}
+.play.playing .icon{
+  width:14px;height:16px;border:0;margin:0;
+  background:linear-gradient(90deg,#fff 0 4px,transparent 4px 10px,#fff 10px 14px);
+}
+.timeline{flex:1}
+.bar{
+  height:20px;
+  position:relative;
+  cursor:pointer;
+  touch-action:none;
+  user-select:none;
+}
+.bar::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:50%;
+  height:3px;
+  transform:translateY(-50%);
+  background:rgba(255,255,255,.17);
+  border-radius:99px;
+}
+.fill{
+  position:absolute;
+  left:0;
+  top:50%;
+  height:3px;
+  width:0;
+  transform:translateY(-50%);
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  border-radius:99px;
+}
+.fill::after{
+  content:"";
+  position:absolute;
+  right:-6px;
+  top:50%;
+  width:12px;
+  height:12px;
+  transform:translateY(-50%);
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(255,255,255,.08), 0 2px 7px rgba(0,0,0,.28);
+}
+.times{
+  display:flex;justify-content:space-between;
+  margin-top:8px;font-size:10px;color:#9c97a7;font-variant-numeric:tabular-nums
+}
+.tap{
+  text-align:center;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#8e8998;
+  margin-top:18px;
+  transition:.35s;
+}
+.tap.hide{opacity:0}
+
+@media (max-height:650px){
+  .top{top:18px} .stage{min-height:330px} .player{bottom:18px}
+}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<main class="page">
+  <header class="top">
+    <div class="kicker">una canción para ti</div>
+    <div class="song">Cinema · Benny Benassi ft. Gary Go (Skrillex Remix)</div>
+  </header>
+
+  <section class="stage">
+    <div class="dedication" id="dedication">
+      <div class="heart">♡</div>
+      <h1>Esta canción te la dedico.</h1>
+      <p>Hay canciones que dicen justo lo que uno quiere decir.</p>
+    </div>
+
+    <div class="lyric" id="lyric">
+      <div class="en" id="en"></div>
+      <div class="divider"></div>
+      <div class="es" id="es"></div>
+    </div>
+
+    <div class="final" id="final">Solo quería que escucharas esto. ♡</div>
+  </section>
+
+  <section class="player">
+    <div class="controls">
+      <button class="play" id="play" aria-label="Reproducir canción"><span class="icon"></span></button>
+      <div class="timeline">
+        <div class="bar" id="bar"><div class="fill" id="fill"></div></div>
+        <div class="times"><span id="current">0:00</span><span id="duration">5:10</span></div>
+      </div>
+    </div>
+    <div class="tap" id="tap">Dale play ♡</div>
+  </section>
+
+  <audio id="audio" preload="metadata">
+    <source src="cinema.mp3" type="audio/mpeg">
+  </audio>
+</main>
+
+<script>
+const subtitles = [
+  { "start": 13.7, "en": "I could watch you for a lifetime", "es": "Podría contemplarte toda una vida" },
+  { "start": 17.2, "en": "You're my favorite movie", "es": "Eres mi película favorita" },
+  { "start": 21.1, "en": "A thousand endings", "es": "Mil finales diferentes" },
+  { "start": 24.2, "en": "You mean everything to me", "es": "Significas todo para mí" },
+  { "start": 27.3, "en": "I never know what's comin'", "es": "Nunca sé lo que viene" },
+  { "start": 31.1, "en": "Forever fascinated", "es": "Siempre fascinado por ti" },
+  { "start": 34.0, "en": "Hope you don't stop runnin'", "es": "Espero que no dejes de correr" },
+  { "start": 36.9, "en": "To me 'cause I'll always be waitin'", "es": "Hacia mí, porque siempre te estaré esperando" },
+
+  { "start": 40.2, "en": "You are my cinema", "es": "Tú eres mi cine" },
+  { "start": 43.2, "en": "I could watch you forever", "es": "Podría contemplarte por siempre" },
+  { "start": 47.2, "en": "Action, thriller", "es": "Acción, suspenso" },
+  { "start": 50.0, "en": "I could watch you forever", "es": "Podría contemplarte por siempre" },
+  { "start": 53.6, "en": "You are my cinema", "es": "Tú eres mi cine" },
+  { "start": 56.9, "en": "A Hollywood treasure", "es": "Un tesoro de Hollywood" },
+  { "start": 60.0, "en": "Love you just the way you are", "es": "Te amo tal y como eres" },
+  { "start": 63.6, "en": "My cinema, my cinema", "es": "Mi cine, mi cine" },
+
+  { "start": 66.0, "en": "Get up, get down", "es": "Sube y baja" },
+  { "start": 67.0, "en": "Lose that sound", "es": "Déjate llevar por ese sonido" },
+  { "start": 67.8, "en": "My DJ gonna break it down", "es": "Mi DJ va a hacerlo vibrar" },
+  { "start": 69.4, "en": "Get up, get down", "es": "Sube y baja" },
+  { "start": 70.2, "en": "Lose that sound", "es": "Déjate llevar por ese sonido" },
+  { "start": 71.1, "en": "My DJ gonna break it down", "es": "Mi DJ va a hacerlo vibrar" },
+  { "start": 72.8, "en": "Get up, get down", "es": "Sube y baja" },
+  { "start": 73.7, "en": "Lose that sound", "es": "Déjate llevar por ese sonido" },
+  { "start": 74.5, "en": "My DJ gonna break it down", "es": "Mi DJ va a hacerlo vibrar" },
+  { "start": 76.0, "en": "Get up, get down", "es": "Sube y baja" },
+  { "start": 77.0, "en": "Lose that sound", "es": "Déjate llevar por ese sonido" },
+  { "start": 78.0, "en": "Drop the bass", "es": "¡Que entre el bajo!" },
+
+  { "start": 105.0, "en": "My cinema", "es": "Mi cine" },
+
+  { "start": 133.0, "en": "Stars spell out your name", "es": "Las estrellas forman tu nombre" },
+  { "start": 136.3, "en": "Like in a science fiction drama", "es": "Como en un drama de ciencia ficción" },
+  { "start": 139.7, "en": "Romance growing", "es": "Nuestro romance florece" },
+  { "start": 142.9, "en": "Like a flower in the summer", "es": "Como una flor en verano" },
+  { "start": 146.3, "en": "You always keep me guessin'", "es": "Siempre consigues sorprenderme" },
+  { "start": 149.5, "en": "Forever my wonder", "es": "Siempre serás mi maravilla" },
+  { "start": 152.8, "en": "Hope you start undressin'", "es": "Espero que empieces a desnudar" },
+  { "start": 155.5, "en": "All my dreams and take me under", "es": "Todos mis sueños y me sumerjas en ellos" },
+
+  { "start": 159.3, "en": "You are my cinema", "es": "Tú eres mi cine" },
+  { "start": 162.3, "en": "I could watch you forever", "es": "Podría contemplarte por siempre" },
+  { "start": 166.3, "en": "Action, thriller", "es": "Acción, suspenso" },
+  { "start": 169.1, "en": "I could watch you forever", "es": "Podría contemplarte por siempre" },
+  { "start": 172.7, "en": "You are my cinema", "es": "Tú eres mi cine" },
+  { "start": 176.0, "en": "A Hollywood treasure", "es": "Un tesoro de Hollywood" },
+  { "start": 179.1, "en": "Love you just the way you are", "es": "Te amo tal y como eres" },
+  { "start": 182.7, "en": "My cinema, my cinema", "es": "Mi cine, mi cine" },
+
+  { "start": 185.1, "en": "Get up, get down", "es": "Sube y baja" },
+  { "start": 186.0, "en": "Lose that sound", "es": "Déjate llevar por ese sonido" },
+  { "start": 187.0, "en": "My DJ gonna break it down", "es": "Mi DJ va a hacerlo vibrar" },
+  { "start": 188.2, "en": "Get up, get down", "es": "Sube y baja" },
+  { "start": 189.1, "en": "Lose that sound", "es": "Déjate llevar por ese sonido" },
+  { "start": 190.2, "en": "My DJ gonna break it down", "es": "Mi DJ va a hacerlo vibrar" },
+  { "start": 192.0, "en": "Get up, get down", "es": "Sube y baja" },
+  { "start": 192.8, "en": "Lose that sound", "es": "Déjate llevar por ese sonido" },
+  { "start": 193.4, "en": "My DJ gonna break it down", "es": "Mi DJ va a hacerlo vibrar" },
+  { "start": 195.2, "en": "Get up, get down", "es": "Sube y baja" },
+  { "start": 196.3, "en": "Lose that sound", "es": "Déjate llevar por ese sonido" },
+  { "start": 197.1, "en": "Drop the bass", "es": "¡Que entre el bajo!" },
+
+  { "start": 224.0, "en": "My cinema", "es": "Mi cine" },
+
+  { "start": 251.9, "en": "You are my cinema", "es": "Tú eres mi cine" },
+  { "start": 254.9, "en": "I could watch you forever", "es": "Podría contemplarte por siempre" },
+  { "start": 258.9, "en": "Action, thriller", "es": "Acción, suspenso" },
+  { "start": 261.7, "en": "I could watch you forever", "es": "Podría contemplarte por siempre" },
+  { "start": 265.3, "en": "You are my cinema", "es": "Tú eres mi cine" },
+  { "start": 268.6, "en": "A Hollywood treasure", "es": "Un tesoro de Hollywood" },
+  { "start": 271.7, "en": "Love you just the way you are", "es": "Te amo tal y como eres" },
+  { "start": 275.3, "en": "My cinema, my cinema", "es": "Mi cine, mi cine" },
+
+  { "start": 279.0, "en": "My cinema, my cinema", "es": "Mi cine, mi cine" },
+  { "start": 282.5, "en": "My cinema, my cinema", "es": "Mi cine, mi cine" },
+  { "start": 286.0, "en": "My cinema, my cinema", "es": "Mi cine, mi cine" },
+  { "start": 289.5, "en": "My cinema, my cinema", "es": "Mi cine, mi cine" },
+  { "start": 293.0, "en": "My cinema, my cinema", "es": "Mi cine, mi cine" },
+  { "start": 296.0, "en": "My cinema", "es": "Mi cine" },
+  { "start": 299.0, "en": "Cinema", "es": "Cinema" }
+];
+const audio = document.getElementById('audio');
+const play = document.getElementById('play');
+const lyric = document.getElementById('lyric');
+const en = document.getElementById('en');
+const es = document.getElementById('es');
+const dedication = document.getElementById('dedication');
+const final = document.getElementById('final');
+const fill = document.getElementById('fill');
+const bar = document.getElementById('bar');
+const current = document.getElementById('current');
+const duration = document.getElementById('duration');
+const tap = document.getElementById('tap');
+
+let activeIndex = -2;
+const introEnd = subtitles[0].start;
+const finalStart = 304; // Mensaje final, cerca del final del audio de 5:10.
+
+const fmt = s => {
+  if (!Number.isFinite(s)) return '0:00';
+  const m = Math.floor(s/60);
+  const sec = Math.floor(s%60).toString().padStart(2,'0');
+  return `${m}:${sec}`;
+};
+
+function setPlaying(on){
+  play.classList.toggle('playing', on);
+  play.setAttribute('aria-label', on ? 'Pausar canción' : 'Reproducir canción');
+  tap.classList.toggle('hide', on || audio.currentTime > 0);
+}
+
+play.addEventListener('click', async () => {
+  if (audio.paused) {
+    try { await audio.play(); setPlaying(true); } catch(e) { console.error(e); }
+  } else {
+    audio.pause(); setPlaying(false);
+  }
+});
+
+audio.addEventListener('play', () => setPlaying(true));
+audio.addEventListener('pause', () => setPlaying(false));
+audio.addEventListener('loadedmetadata', () => duration.textContent = fmt(audio.duration));
+
+function updateSubtitle(t){
+  if (t < introEnd) {
+    dedication.classList.remove('hide');
+    lyric.classList.remove('show');
+    final.classList.remove('show');
+    activeIndex = -1;
+    return;
+  }
+
+  if (t > finalStart) {
+    dedication.classList.add('hide');
+    lyric.classList.remove('show');
+    final.classList.add('show');
+    activeIndex = subtitles.length;
+    return;
+  }
+
+  final.classList.remove('show');
+  dedication.classList.add('hide');
+
+  let idx = -1;
+  for (let i = subtitles.length - 1; i >= 0; i--) {
+    if (t >= subtitles[i].start) { idx = i; break; }
+  }
+
+  if (idx !== activeIndex && idx >= 0) {
+    activeIndex = idx;
+    // Cambio inmediato: no ocultar la frase ni esperar con setTimeout.
+    en.textContent = subtitles[idx].en;
+    es.textContent = subtitles[idx].es;
+    lyric.classList.add('show');
+  }
+}
+
+audio.addEventListener('seeked', () => updateSubtitle(audio.currentTime));
+
+audio.addEventListener('timeupdate', () => {
+  const p = audio.duration ? audio.currentTime / audio.duration : 0;
+  fill.style.width = `${p*100}%`;
+  current.textContent = fmt(audio.currentTime);
+  updateSubtitle(audio.currentTime);
+});
+
+let isSeeking = false;
+function seekFromX(clientX){
+  if (!audio.duration) return;
+  const r = bar.getBoundingClientRect();
+  const ratio = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+  audio.currentTime = ratio * audio.duration;
+}
+
+bar.addEventListener('pointerdown', e => {
+  isSeeking = true;
+  bar.setPointerCapture(e.pointerId);
+  seekFromX(e.clientX);
+});
+bar.addEventListener('pointermove', e => { if (isSeeking) seekFromX(e.clientX); });
+bar.addEventListener('pointerup', e => {
+  if (!isSeeking) return;
+  seekFromX(e.clientX);
+  isSeeking = false;
+  if (bar.hasPointerCapture(e.pointerId)) bar.releasePointerCapture(e.pointerId);
+});
+bar.addEventListener('pointercancel', e => {
+  isSeeking = false;
+  if (bar.hasPointerCapture(e.pointerId)) bar.releasePointerCapture(e.pointerId);
+});
+
+audio.addEventListener('ended', () => {
+  setPlaying(false);
+  final.classList.add('show');
+  lyric.classList.remove('show');
+});
+</script>
+</body>
+</html>

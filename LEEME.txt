@@ -1,0 +1,8 @@
+CINEMA - PRUEBA DE SINCRONIZACIÓN V2
+
+Abre index.html en Chrome o Live Server.
+La primera frase se muestra en 0:14 (antes 0:29).
+Se han adelantado de forma PROVISIONAL las demás frases 15 segundos.
+El resto de tiempos NO está validado frase por frase contra la voz: es necesario probar y ajustar por secciones.
+Para modificar un tiempo cambia start en index.html (subtitulos.json es copia editable de referencia).
+Archivo de audio: cinema.mp3, duración aproximada 5:10.
